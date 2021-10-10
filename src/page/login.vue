@@ -1,17 +1,32 @@
 <template>
-  <form class="login" action="">
-    <label class="item">账号：</label>
-    <input class="item inputbox" type="text" placeholder="请输入您的手机号|邮箱" v-model="formMess.user"/>
-    <label class="item">密码：</label>
-    <input class="item inputbox" type="password" placeholder="请输入您的密码" v-model="formMess.password"/>
-    <div class="btns">
-      <input class="submit" type="reset" value="重 置" />
-      <input class="submit" type="submit" value="提 交" @click.enter="onSubmit()" />
-    </div>
-    <div class="more">
-      <a>去注册？</a><a>忘记密码</a>
-    </div>
-  </form>
+  <div name="login_div">
+    <form class="login" action="">
+      <label class="item">账号：</label>
+      <input
+        class="item inputbox"
+        type="text"
+        placeholder="请输入您的手机号|邮箱"
+        v-model="formMess.user"
+      />
+      <label class="item">密码：</label>
+      <input
+        class="item inputbox"
+        type="password"
+        placeholder="请输入您的密码"
+        v-model="formMess.password"
+      />
+      <div class="btns">
+        <input class="submit" type="reset" value="重 置" />
+        <input
+          class="submit"
+          type="submit"
+          value="提 交"
+          @click.enter="onSubmit()"
+        />
+      </div>
+      <div class="more"><a>去注册？</a><a>忘记密码</a></div>
+    </form>
+  </div>
 </template>
 <script>
 import axios from "axios";
@@ -22,7 +37,7 @@ export default {
     return {
       formMess: {
         user: "",
-        password: ""
+        password: "",
       },
     };
   },
@@ -36,9 +51,9 @@ export default {
       for (var key in this.formMess) {
         formData.append(key, this.formMess[key]);
       }
-      if(!formData.get("user") && !formData.get("password")){
-	      alert("请输入账号密码后再点击登录");
-	      return;
+      if (!formData.get("user") && !formData.get("password")) {
+        alert("请输入账号密码后再点击登录");
+        return;
       }
       axios({
         method: "post",
@@ -50,19 +65,29 @@ export default {
         data: formData,
       }).then((res) => {
         console.log(res);
-        debugger
         var logined = res.data.loginCode;
-        if(logined==1){
-          this.$router.push({ path: "/home" });
-        }else{
-	  this.$router.push({ path: "/login" });
-	}
+        if (logined == 1) {
+          this.$router.push({ path: "/index" });
+        } else {
+          this.$router.push({ path: "/login" });
+        }
       });
     },
   },
 };
 </script>
 <style scoped>
+div[name="login_div"] {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  height: 698px;
+  background: url(/static/images/bamboo.jpeg) center no-repeat;
+  background-size: 100% 100%;
+}
 .login {
   position: absolute;
   top: 200px;
