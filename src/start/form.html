@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- 生产环境版本，优化了尺寸和速度 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <title>表单输入绑定</title>
+<style>
+    .hello-enter-active,.hello-leave-active{
+        transition: 1s;
+    }
+</style>
+</head>
+
+<body>
+    <!-- v-model 会忽略所有表单元素的 value、checked、selected attribute 的初始值而总是将 Vue 实例的数据作为数据来源。 
+         在文本区域插值 (<textarea>{{text}}</textarea>) 并不会生效，应用 v-model 来代替。
+    -->
+    <div id="test">
+        <form name="person" action="xxx" @submit.prevent="handleSubmit">
+            <fieldset>
+                <legend>个人信息</legend>
+                <span>用户名：</span><input type="text" placeholder="请输入用户名" v-model="userName" />
+                <br>
+                <span>密 码：</span><input type="password" placeholder="请输入您的密码" v-model="userPassword" />
+                <br>
+                <span>性 别：</span>
+                <input type="radio" id="female" value="F" v-model="sex" /><label for="female">女</label>
+                <input type="radio" id="male" value="M" v-model="sex" /><label for="male">男</label>
+                <br>
+                <span>同 学：</span>
+                <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+                <label for="jack">Jack</label>
+                <input type="checkbox" id="john" value="John" v-model="checkedNames">
+                <label for="john">John</label>
+                <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+                <label for="mike">Mike</label>
+                <br>
+                <span>城 市：</span>
+                <select v-model="cityId">
+                    <option value="">未选择</option>
+                    <option :value="city.id" v-for="(city,index) in allCitys" :key="index">{{city.name}}</option>
+                </select>
+                <br>
+                <span>兴趣爱好：</span>
+                <span v-for="like in hobbies">
+                    <input type="checkbox" id="like.caption" :value="like.code" v-model="likes">
+                    <label for="like.caption" value="like.caption">{{like.caption}}</label>
+                </span>
+                <br>
+                <span>学 历：</span>
+                <select v-model="degreeSelected">
+                    <option value="0">未选择</option>
+                    <option v-for="option in degree" v-bind:key="option.value">{{ option.text }}</option>
+                </select>
+                <br>
+                <span>毕业学校：</span>
+                    <select v-model="school">
+                        <option disabled>请选择</option>
+                        <option value="HZKJ">华中科技大学</option>
+                        <option value="HZSF">华中师范大学/option>
+                        <option value="HBDL">华北电力大学</option>
+                    </select>
+                    <br>
+                    <span>备 注：</span>
+                    <textarea placeholder="如有其他需要，请在此说明" v-model="moreInfo" rows="10" cols="100"></textarea>
+                    
+
+            </fieldset>
+            <div class="operation">
+                <input type="reset" value="重置"/>
+                <input type="submit" value="提交"/>
+            </div>
+        </form>
+
+        <br/>
+        <div>生命周期，也叫钩子函数</div>
+        <button @click="destoryVM" v-show="show">销毁实例</button>
+
+        <div>过度&动画</div>
+        <button @click="this.isShow=!this.isShow" >toggleClass</button>
+        <transition name="hello">
+            <p v-show="isShow">Hello</p>
+        </transition>
+    </div>
+    <script>
+        const vm = new Vue({
+            el: "#test",
+            data: {
+                userName: "瑷珲",
+                userPassword: "abcd1234", 
+                sex: "F",
+                checkedNames: ["John"],
+                likes:['pingpang'],
+                hobbies: [
+                    { code: 'basket', caption: "篮球" },
+                    { code: 'soccer', caption: "足球" },
+                    { code: 'baseball', caption: "排球" },
+                    { code: 'pingpang', caption: "乒乓球" }
+                ],
+                cityId:'2',
+                allCitys:[
+                    {id:1,name:"BJ"},
+                    {id:2,name:"SH"},
+                    {id:3,name:"GD"}
+                ],
+                degreeSelected: '0',
+                degree: [
+                    { text: '博士', value: 'Doctor' },
+                    { text: '硕士', value: 'Master' },
+                    { text: '本科', value: 'college' },
+                    { text: '大专', value: 'junior college' }
+                ],
+                school: "HBDL",
+                moreInfo: "",
+                show:true
+            },
+            methods: {
+                
+                handleSubmit() {
+                    console.log("submit data");
+                    console.log(this);
+                },
+                destoryVM(){
+                    this.$destroy();
+                }
+            },
+
+            //初始化显示
+            beforeCreate(){
+                console.log("beforeCreate")
+            },
+            created(){
+                console.log("created.");
+            },
+            //挂载
+            beforeMount(){
+                console.log("beforeMount")
+            },
+            mounted(){
+                console.log("mounted.");
+                //发送ajax请求获取数据；启动定时器等
+                this.intervalId=setInterval(()=>{
+                    this.show=!this.show
+                },1000);
+            },
+            //更新
+            beforeUpdated(){
+                console.log("beforeUpdated.");
+            },
+            updated(){
+                console.log("updated.");
+            },
+            //销毁
+            beforeDestroy(){
+                console.log("beforeDestroy.");
+                //做收尾工作，清除定时器等
+                clearInterval(this.intervalId);
+            },
+            destroyed(){
+                console.log("destoyed.");
+            }
+        });
+    </script>
+</body>
+
+</html>
